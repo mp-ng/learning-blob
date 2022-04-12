@@ -4,4 +4,4 @@ A reinforcement learning (Q-learning) environment involving a player, an enemy a
 
 The trend in rewards at each stage is plotted after the simulation.
 
-![example gif](./media/example.gif)
+<img src="./media/example.gif" width="500">

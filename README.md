@@ -1,4 +1,4 @@
-# Learning Blob
+# Learning Blob 🟦🟥🟩
 
 A reinforcement learning (Q-learning) environment involving a player, an enemy and a food object.
 

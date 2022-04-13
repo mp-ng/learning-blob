@@ -24,7 +24,7 @@ class Blob:
 			self.move(x=1, y=-1)
 
 	def move(self, x=False, y=False):
-		if not x:
+		if not (x and y):
 			self.x += np.random.randint(-1, 2)
 			self.y += np.random.randint(-1, 2)
 		else:

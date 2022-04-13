@@ -1,4 +1,5 @@
-import blob
+from blob import Player, Food, Enemy
+
 import numpy as np
 from PIL import Image
 import cv2
@@ -14,8 +15,6 @@ FOOD_REWARD = 25
 epsilon = 0.9
 EPS_DECAY = 0.9998
 SHOW_EVERY = 1000
-
-start_q_table = None  # or filename
 
 LEARNING_RATE = 0.1
 DISCOUNT = 0.95
@@ -35,9 +34,9 @@ for x1 in range(-SIZE + 1, SIZE):
 episode_rewards = []
 
 for episode in range(EPISODES):
-	player = blob.Player(SIZE)
-	food = blob.Food(SIZE)
-	enemy = blob.Enemy(SIZE)
+	player = Player(SIZE)
+	food = Food(SIZE)
+	enemy = Enemy(SIZE)
 
 	if episode % SHOW_EVERY == 0:
 		print(f"on # {episode}, epsilon: {epsilon}")
@@ -82,9 +81,9 @@ for episode in range(EPISODES):
 
 		if show:
 			env = np.zeros((SIZE, SIZE, 3), dtype=np.uint8)
-			env[player.y][player.x] = blob.Player(SIZE).color
-			env[food.y][food.x] = blob.Food(SIZE).color
-			env[enemy.y][enemy.x] = blob.Enemy(SIZE).color
+			env[player.y][player.x] = Player(SIZE).color
+			env[food.y][food.x] = Food(SIZE).color
+			env[enemy.y][enemy.x] = Enemy(SIZE).color
 
 			img = Image.fromarray(env, "RGB")
 			img = img.resize((300, 300), resample=Image.BOX)

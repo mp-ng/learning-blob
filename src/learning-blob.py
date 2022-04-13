@@ -1,97 +1,43 @@
+import blob
 import numpy as np
 from PIL import Image
 import cv2
 import matplotlib.pyplot as plt
-import pickle
 from matplotlib import style
-import time
-
-style.use("ggplot")
 
 SIZE = 10
-EPISODES = 25000
+EPISODES = 2000
 MOVES_PER_EP = 200
 MOVE_PENALTY = 1
 ENEMY_PENALTY = 300
 FOOD_REWARD = 25
 epsilon = 0.9
 EPS_DECAY = 0.9998
-SHOW_EVERY = 3000
+SHOW_EVERY = 1000
 
 start_q_table = None  # or filename
 
 LEARNING_RATE = 0.1
 DISCOUNT = 0.95
 
-PLAYER_COLOR = 1
-FOOD_COLOR = 2
-ENEMY_COLOR = 3
-
-colors = {1: (255, 175, 0),  # BGR
-	 2: (0, 255, 0),
-	 3: (0, 0, 255)}
-
-class Blob:
-	def __init__(self):
-		self.x = np.random.randint(0, SIZE)
-		self.y = np.random.randint(0, SIZE)
-
-	def __str__(self):
-		return f"{self.x}, {self.y}"
-
-	def __sub__(self, other):
-		return (self.x - other.x, self.y - other.y)
-
-	def action(self, choice):
-		if choice == 0:
-			self.move(x=1, y=1)
-		elif choice == 1:
-			self.move(x=-1, y=-1)
-		elif choice == 2:
-			self.move(x=-1, y=1)
-		elif choice == 3:
-			self.move(x=1, y=-1)
-
-	def move(self, x=False, y=False):
-		if not (x and y):
-			self.x += np.random.randint(-1, 2)
-			self.y += np.random.randint(-1, 2)
-		else:
-			self.x += x
-			self.y += y
-
-		if self.x < 0:
-			self.x = 0
-		elif self.x > SIZE - 1:
-			self.x = SIZE - 1
-
-		if self.y < 0:
-			self.y = 0
-		elif self.y > SIZE - 1:
-			self.y = SIZE - 1
-
 # Our observation space would be ((x1, y1), (x2, y2))
 # where the first tuple is the distance from food
 # and the second tuple is the distance from enemy
 # so we need all the possible combinations
 
-if start_q_table is None:
-	q_table = {}
-	for x1 in range(-SIZE + 1, SIZE):
-		for y1 in range(-SIZE + 1, SIZE):
-			for x2 in range(-SIZE + 1, SIZE):
-				for y2 in range(-SIZE + 1, SIZE):
-					q_table[((x1, y1),(x2, y2))] = [np.random.uniform(-5, 0) for i in range(4)]
-else:
-	with open(start_q_table, "rb") as f:
-		q_table = pickle.load(f)
+q_table = {}
+for x1 in range(-SIZE + 1, SIZE):
+	for y1 in range(-SIZE + 1, SIZE):
+		for x2 in range(-SIZE + 1, SIZE):
+			for y2 in range(-SIZE + 1, SIZE):
+				q_table[((x1, y1),(x2, y2))] = [np.random.uniform(-5, 0) for i in range(4)]
 
 episode_rewards = []
 
 for episode in range(EPISODES):
-	player = Blob()
-	food = Blob()
-	enemy = Blob()
+	player = blob.Player(SIZE)
+	food = blob.Food(SIZE)
+	enemy = blob.Enemy(SIZE)
 
 	if episode % SHOW_EVERY == 0:
 		print(f"on # {episode}, epsilon: {epsilon}")
@@ -136,9 +82,9 @@ for episode in range(EPISODES):
 
 		if show:
 			env = np.zeros((SIZE, SIZE, 3), dtype=np.uint8)
-			env[player.y][player.x] = colors[PLAYER_COLOR]
-			env[food.y][food.x] = colors[FOOD_COLOR]
-			env[enemy.y][enemy.x] = colors[ENEMY_COLOR]
+			env[player.y][player.x] = blob.Player(SIZE).color
+			env[food.y][food.x] = blob.Food(SIZE).color
+			env[enemy.y][enemy.x] = blob.Enemy(SIZE).color
 
 			img = Image.fromarray(env, "RGB")
 			img = img.resize((300, 300), resample=Image.BOX)
@@ -159,10 +105,8 @@ for episode in range(EPISODES):
 
 moving_avg = np.convolve(episode_rewards, np.ones((SHOW_EVERY,)) / SHOW_EVERY, mode="valid")
 
+style.use("ggplot")
 plt.plot([i for i in range(len(moving_avg))], moving_avg)
-plt.ylabel(f"reward {SHOW_EVERY}moving_avg")
+plt.ylabel(f"reward moving-average")
 plt.xlabel("episode #")
 plt.show()
-
-# with open(f"q_table={int(time.time())}.pickle", "wb") as f:
-	# pickle.dump(q_table, f)

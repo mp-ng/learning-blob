@@ -1,7 +1,6 @@
 # Learning Blob 🟦
 
-A reinforcement learning (Q-learning) environment involving a player, an enemy and a food object.
+A deep reinforcement learning (Q-learning) environment involving a player, an enemy and a food object. Also includes a basic Q-learning environment without involving the use of neural networks.
 
-The trend in rewards at each stage is plotted after the simulation.
-
+Example of the simulation: (4-direction blob)
 <img src="./media/example.gif" width="500">

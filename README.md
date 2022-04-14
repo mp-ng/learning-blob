@@ -4,6 +4,6 @@ A deep reinforcement learning (Q-learning) environment involving a player, an en
 
 Also includes a basic Q-learning environment without involving the use of neural networks.
 
-Example of the simulation: (4-direction blob)
+Example of the simulation: (4-directional blob)
 
 <img src="./media/example.gif" width="500">
